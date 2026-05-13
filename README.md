@@ -328,14 +328,6 @@ Convertir el conocimiento técnico en una **herramienta real que ataque un probl
 - **Ley 21.719** — Protección de datos personales (Chile, vigencia diciembre 2026). [bcn.cl](https://www.bcn.cl/leychile/navegar?idNorma=1209272)
 - **Ley 18.168** — Ley General de Telecomunicaciones.
 
-### 📑 Documentación interna del proyecto
-
-> Disponible en el directorio raíz del repositorio:
-> - 📄 `Investigación_para_Propuesta_CultivaSeguro.md` — informe de respaldo principal.
-> - 📄 `Investigación_complementaria___Proyecto_CultivaSeguro.md` — datos sectoriales adicionales.
-> - 📄 `Materiales_para_fortalecer_tu_propuesta.txt` — síntesis ejecutiva.
-> - 📄 `Bases_Torneo_Innova_Sostenible_2026.pdf` — bases oficiales del torneo.
-
 ---
 
 ## 📄 Licencia y Aviso
