@@ -148,16 +148,16 @@ flowchart LR
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    🌾 PREDIO DEL AGRICULTOR                      │
-│                                                                  │
+│                    🌾 PREDIO DEL AGRICULTOR                    │
+│                                                                 │
 │   ┌──────────────────┐        ┌──────────────────┐              │
 │   │  Invernadero #1  │        │  Invernadero #2  │              │
-│   │  [☀️ Nodo IoT]   │        │  [☀️ Nodo IoT]   │              │
+│   │  [☀️ Nodo IoT]  │        │  [☀️ Nodo IoT]   │              │
 │   └────────┬─────────┘        └────────┬─────────┘              │
-│            │                            │                        │
-└────────────┼────────────────────────────┼────────────────────────┘
-             │   📡 NB-IoT (sólo eventos) │
-             ▼                            ▼
+│            │                           │                        │
+└────────────┼───────────────────────────┼────────────────────────┘
+             │  📡 NB-IoT (sólo eventos) │
+             ▼                           ▼
        ┌─────────────────────────────────────────┐
        │   ☁️ Servidor Central CultivaSeguro     │
        │  ┌───────────────────────────────────┐  │
@@ -278,8 +278,8 @@ Convertir el conocimiento técnico en una **herramienta real que ataque un probl
 
 ```
 2026
-├── 🟢 08 ABR – 06 MAY ─ Postulación (Activación) ◄── ETAPA ACTUAL
-├── ⚪ 11 MAY – 20 MAY ─ Formación específica
+├── 🟢 08 ABR – 06 MAY ─ Postulación 
+├── 🟢 11 MAY – 20 MAY ─ Formación específica (Activación) ◄── ETAPA ACTUAL
 ├── ⚪ 02 JUN – 03 JUL ─ Aceleración
 ├── ⚪ 04 JUL – 19 JUL ─ Demo Day Final
 └── ⚪    20 AGO       ─ Premiación
