@@ -36,7 +36,7 @@
 
 **CultivaSeguro** es una solución tecnológica integral diseñada para mitigar las severas pérdidas económicas que sufren los pequeños agricultores frente a los embates extremos del cambio climático, como **heladas atípicas**, **estrés hídrico agudo** y **olas de calor**.
 
-El sistema despliega una red de **nodos físicos de bajo costo dentro de los invernaderos**, que combinan sensores microclimáticos, conectividad celular de banda estrecha (NB-IoT/5G), energía solar autónoma e inteligencia artificial **open-source operada localmente**, para enviar alertas preventivas y accionables en lenguaje natural —vía WhatsApp— al agricultor justo antes de que ocurra una catástrofe.
+El sistema despliega una red de **nodos físicos de bajo costo dentro de los invernaderos**, que combinan sensores microclimáticos, **conectividad inalámbrica adaptada a cada zona (NB-IoT, LoRaWAN o red celular)** y energía solar autónoma. Las peticiones críticas son procesadas por un **motor de IA open-source que opera en el servidor centralizado de CultivaSeguro**, y la respuesta llega al agricultor como alerta preventiva accionable en lenguaje natural —vía WhatsApp— justo antes de que ocurra una catástrofe.
 
 > 🎯 **Propósito**: Migrar el paradigma de la **indemnización post-desastre** (modelo actual del Estado vía seguro PACSA) hacia la **mitigación activa pre-evento**.
 
@@ -58,6 +58,21 @@ La matriz silvoagropecuaria chilena enfrenta un punto de inflexión estructural.
 | Aceleración del calentamiento (últimos 33 años) | **+0,21 °C/década** | Reporte Anual del Clima en Chile 2024 — DMC |
 
 > ⚠️ **Hallazgo crítico (INIA La Platina, 2024):** El invernadero plástico del pequeño agricultor **no lo protege de la helada radiativa nocturna**. Esto justifica empíricamente la necesidad de una **alerta temprana in-situ**, no macroclimática.
+
+### 👴 El usuario real: un agricultor adulto mayor con baja alfabetización digital
+
+El diseño de cualquier solución AgTech para la AFC debe partir de un hecho demográfico verificado: el sector está **estructuralmente envejecido**, con tasa de reemplazo generacional negativa.
+
+| 👤 Segmento etario de productores AFC | 📊 Porcentaje | 🔗 Fuente |
+|---|---|---|
+| Productores mayores de 65 años | **34,3%** | ODEPA / INE — CAF 2021 |
+| Productores entre 50 y 64 años | **39,9%** | ODEPA / INE — CAF 2021 |
+| **Total productores con 50+ años** | **74,2%** | Cálculo basado en CAF 2021 |
+| Edad promedio del agricultor familiar | **> 58 años** (vs. 51–53 en 2007) | U. de Chile / ODEPA |
+| Adultos mayores rurales que requieren ayuda para trámites digitales | **76%** | CASEN 2022 |
+| Adultos mayores que ya usan WhatsApp a diario | **59%** | Observatorio del Envejecimiento UC-Confuturo (2022) |
+
+> 📌 **Implicancia de diseño:** un agricultor promedio en la AFC tiene sobre 58 años, baja alfabetización digital y ya usa WhatsApp todos los días. Esto **descarta** las apps nativas complejas como canal de adopción y **valida** la estrategia de notificación conversacional vía WhatsApp como el único canal con cobertura efectiva en el segmento.
 
 ### 🧨 La falla lógica del modelo actual
 
@@ -81,7 +96,7 @@ CultivaSeguro instala dentro del invernadero pequeños **nodos sensores autónom
 <td width="50%" valign="top">
 
 **🔌 Nodo Físico (Hardware en invernadero)**
-- 📡 Microcontrolador con NB-IoT / 5G nativo
+- 📡 Microcontrolador con conectividad inalámbrica (NB-IoT, LoRaWAN o red celular según zona)
 - 🌡️ Sensor de temperatura y humedad
 - 🔆 Sensor de iluminancia (lux reales)
 - 🧭 Sensor de presión barométrica
@@ -92,7 +107,7 @@ CultivaSeguro instala dentro del invernadero pequeños **nodos sensores autónom
 <td width="50%" valign="top">
 
 **☁️ Plataforma Central (Servidor + IA)**
-- 🤖 Motor de IA **open-source local** (Llama 3.1 / Qwen)
+- 🤖 Motor de IA **open-source en servidor propio de CultivaSeguro** (no en el nodo)
 - 🖥️ Dashboard web diurno, limpio y legible bajo el sol
 - ⚙️ Configuración por tipo de hortaliza (umbrales personalizados)
 - 📲 Notificaciones vía **WhatsApp Business API**
@@ -110,8 +125,8 @@ CultivaSeguro instala dentro del invernadero pequeños **nodos sensores autónom
 flowchart LR
     A[🌱 Invernadero<br/>Nodo Sensor] -->|Telemetría local| B{¿Variable<br/>en umbral<br/>de riesgo?}
     B -- No --> A
-    B -- Sí --> C[📡 NB-IoT / 5G<br/>Petición crítica]
-    C --> D[🖥️ Servidor Central<br/>IA Open-Source Local]
+    B -- Sí --> C[📡 NB-IoT / LoRaWAN / Celular<br/>Petición crítica]
+    C --> D[🖥️ Servidor Central CultivaSeguro<br/>IA Open-Source]
     D --> E[🤖 Análisis contextual<br/>por cultivo]
     E --> F[📲 Alerta WhatsApp<br/>Instrucciones accionables]
     F --> G[👨‍🌾 Agricultor<br/>actúa a tiempo]
@@ -125,7 +140,7 @@ flowchart LR
 |---|---|---|
 | Telemetría continua → Cloud | | Evaluación on-device + envío sólo en evento |
 | Plan de datos alto / batería corta | | Plan IoT mínimo / batería >10 años (NB-IoT PSM) |
-| API pagada por solicitud | | IA open-source local (OPEX ≈ 0) |
+| API pagada por solicitud | | IA open-source en servidor propio (OPEX ≈ 0 por consulta) |
 | Dashboard complejo | | Mensaje WhatsApp en lenguaje natural |
 
 ---
@@ -136,32 +151,35 @@ flowchart LR
 
 | Capa | Tecnología | Justificación técnica |
 |---|---|---|
-| **Hardware** | Microcontrolador + módulo NB-IoT (ej. Quectel BC66 / SIMCom SIM7000G) | Costo unitario US$ 5–10, *link budget* de ~164 dB (penetra invernaderos densos) |
+| **Hardware** | Microcontrolador + módulo de conectividad (ej. Quectel BC66, SIMCom SIM7000G, módulos LoRa) | Costo unitario US$ 5–10, *link budget* alto (penetra invernaderos densos) |
 | **Sensores** | Temperatura, humedad, presión, iluminancia | Resolución microclimática *in situ* |
-| **Conectividad** | NB-IoT (Entel/Wisely, Banda 28 – 700 MHz) | Primera red comercial NB-IoT en Chile (2023), cobertura Arica→Punta Arenas |
+| **Conectividad** | **NB-IoT / LoRaWAN / Red Celular** — protocolo adaptado según cobertura y requerimientos del predio | Red NB-IoT comercial de Entel/Wisely (2023) cubre Arica→Punta Arenas; LoRaWAN para zonas sin cobertura celular |
 | **Energía** | Panel solar + almacenamiento Li-ion | Autonomía indefinida bajo PSM/eDRX |
-| **Backend IA** | LLM open-source (Llama 3.1 8B / Qwen 2.5) sobre SBC con NPU (RK3588) | 3,72–11,5 t/s con consumo < 15W. **Elimina dependencia de APIs pagas** |
+| **Backend IA** | LLM open-source (Llama 3.1 / Qwen 2.5) en **servidor centralizado de CultivaSeguro** | Un único servidor propio atiende a todos los clientes. **Elimina dependencia de APIs pagas por solicitud**, garantizando viabilidad financiera del modelo SaaS rural. |
 | **Notificación** | WhatsApp Business API (plantillas categoría *Utility*) | Canal masivo, sin instalar app, opt-in según Ley 21.719 |
 | **Frontend** | Dashboard web responsive con diseño diurno | Legibilidad bajo luz solar directa |
+
+> ⚙️ **Nota arquitectónica:** La IA reside exclusivamente en el **servidor central de CultivaSeguro**, no en el nodo del agricultor. El nodo IoT es un dispositivo de bajo costo (MCU + sensores + módulo de conectividad) que solo transmite una señal cuando detecta una anomalía. El procesamiento inteligente ocurre una única vez en la infraestructura propia del servicio, amortizando el costo entre todos los clientes.
 
 ### 📐 Diagrama de despliegue
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    🌾 PREDIO DEL AGRICULTOR                    │
-│                                                                 │
-│   ┌──────────────────┐        ┌──────────────────┐              │
-│   │  Invernadero #1  │        │  Invernadero #2  │              │
-│   │  [☀️ Nodo IoT]  │        │  [☀️ Nodo IoT]   │              │
-│   └────────┬─────────┘        └────────┬─────────┘              │
-│            │                           │                        │
-└────────────┼───────────────────────────┼────────────────────────┘
-             │  📡 NB-IoT (sólo eventos) │
-             ▼                           ▼
+│                    🌾 PREDIO DEL AGRICULTOR                     │
+│                                                                  │
+│   ┌──────────────────┐         ┌──────────────────┐              │
+│   │  Invernadero #1  │         │  Invernadero #2  │              │
+│   │  [☀️ Nodo IoT]  │         │  [☀️ Nodo IoT]   │              │
+│   └────────┬─────────┘         └────────┬─────────┘              │
+│            │                            │                        │
+└────────────┼────────────────────────────┼────────────────────────┘
+             │  📡 NB-IoT / LoRaWAN /     │
+             │      Celular (sólo eventos)│
+             ▼                            ▼
        ┌─────────────────────────────────────────┐
        │   ☁️ Servidor Central CultivaSeguro     │
        │  ┌───────────────────────────────────┐  │
-       │  │  🤖 Motor IA local (open-source)  │  │
+       │  │  🤖 Motor IA (open-source)        │  │
        │  │  🧠 Contexto agronómico cultivo   │  │
        │  │  📝 Generación de recomendación   │  │
        │  └───────────────────────────────────┘  │
@@ -189,8 +207,8 @@ flowchart LR
 | **Costo usuario** | 🟢 Ultra-bajo (subsidiable INDAP) | 🟢 Gratuito | 🔴 > US$ 500/nodo | 🟡 US$ 450–800 |
 | **Resolución** | 🟢 Microclimática *in situ* | 🔴 Macro (comunal) | 🟢 Microclimática | 🟢 Microclimática |
 | **Notificación** | 🟢 Push WhatsApp proactivo | 🔴 Web pasiva | 🟡 App/email | 🔴 Consola local |
-| **Carga cognitiva** | 🟢 Muy baja (conversacional) | 🟡 Media | 🔴 Alta (dashboards) | 🔴 Media-Alta |
-| **IA** | 🟢 Open-source en *edge* | 🔴 No | 🟡 Cloud predictiva | 🔴 No |
+| **Carga cognitiva** | 🟢 Muy baja (conversacional, diseñada para agricultor adulto mayor: 74,2% del segmento >50 años) | 🟡 Media | 🔴 Alta (dashboards) | 🔴 Media-Alta |
+| **IA** | 🟢 Open-source en servidor propio | 🔴 No | 🟡 Cloud predictiva (API paga) | 🔴 No |
 
 ### 🌊 Océano azul detectado
 
@@ -198,9 +216,9 @@ flowchart LR
 
 ### 🔥 Tres palancas disruptivas
 
-1. **NB-IoT comercial en Chile** (Entel/Wisely, 2023) → conectividad rural viable y barata.
-2. **LLM open-source ejecutables en SBC** (Raspberry Pi 5 / RK3588 NPU) → IA sin APIs pagas.
-3. **WhatsApp Business API** → eliminación de la barrera de adopción de apps en usuarios >50 años.
+1. **Conectividad rural viable y barata en Chile** — NB-IoT comercial (Entel/Wisely, 2023) complementado con LoRaWAN y red celular según zona. Cobertura efectiva desde Arica hasta Punta Arenas.
+2. **LLM open-source en servidor propio de CultivaSeguro** — Un único servidor centralizado atiende a todos los clientes, eliminando el costo por consulta de APIs externas y garantizando viabilidad financiera del modelo SaaS rural.
+3. **WhatsApp Business API** — El 59% de los agricultores mayores ya usa WhatsApp a diario (Observatorio UC-Confuturo, 2022). No hay app que instalar ni hábito que crear: solo recibir el mensaje.
 
 ---
 
@@ -218,11 +236,12 @@ flowchart LR
 ### 👨‍🌾 Eje social
 - Protección del sustento económico de la AFC (sector más vulnerable).
 - Democratización del acceso a asesoría experta.
-- Reducción de la brecha digital rural.
+- Reducción de la brecha digital rural, con interfaz pensada para el adulto mayor.
 
 ### 🇨🇱 Alineación país
 - ✅ **Plan Sectorial de Adaptación al Cambio Climático Silvoagropecuario 2024–2028** (MMA / ODEPA).
 - ✅ **Estrategia Nacional de Residuos Orgánicos Chile 2040** (MMA).
+- ✅ **Estrategia INDAP 2023–2030** (envejecimiento estructural de la AFC como problemática prioritaria).
 - ✅ **ODS 2** (Hambre Cero), **ODS 6** (Agua Limpia), **ODS 12** (Producción Responsable), **ODS 13** (Acción por el Clima).
 
 ---
@@ -244,10 +263,10 @@ flowchart LR
 | Criterio (Etapa 1: Activación) | Ponderación | Cómo lo cumple CultivaSeguro |
 |---|---|---|
 | **Problema alineado al desafío** | 20% | Pérdidas climáticas cuantificadas con fuentes oficiales (MMA, ODEPA, DMC, INIA, INDAP). |
-| **Coherencia idea/proyecto** | 30% | Solución integrada (hardware + IA + WhatsApp) con cadena causal explícita. |
+| **Coherencia idea/proyecto** | 30% | Solución integrada (hardware + IA centralizada + WhatsApp) con cadena causal explícita y diseño centrado en el agricultor adulto mayor (CAF 2021). |
 | **Potencial de la solución** | 30% | Benchmark competitivo, ventaja en océano azul AFC, tres palancas disruptivas verificadas. |
 | **Formulación de la propuesta** | 5% | Documento estructurado, respaldado por más de 40 fuentes formales. |
-| **Equipo** | 15% | Ingeniería en Conectividad y Redes — vinculación directa con NB-IoT, Python y sensores. |
+| **Equipo** | 15% | Ing. en Conectividad y Redes — vinculación directa con NB-IoT/LoRaWAN, Python y sensores, además de raíz territorial en Melipilla. |
 
 ### 🏅 Premio Especial HUB Providencia (Fabricación Digital)
 
@@ -259,7 +278,7 @@ CultivaSeguro califica como candidato natural a la **Mención Honrosa HUB Provid
 
 > *"La tecnología y las telecomunicaciones tienen que servir para proteger a quienes más lo necesitan."*
 
-Como estudiantes de **Ingeniería en Conectividad y Redes** de Duoc UC, contamos con las competencias específicas que este proyecto requiere para no quedarse en el papel:
+Como estudiantes de **Ing. en Conectividad y Redes** de Duoc UC, contamos con las competencias específicas que este proyecto requiere para no quedarse en el papel:
 
 ### 🛠️ Capacidades técnicas internas
 
@@ -270,7 +289,7 @@ Como estudiantes de **Ingeniería en Conectividad y Redes** de Duoc UC, contamos
 
 ### 💚 Lo que nos mueve
 
-Convertir el conocimiento técnico en una **herramienta real que ataque un problema país**: la desprotección del pequeño agricultor frente al cambio climático. Estamos convencidos de que la mejor tecnología **no tiene por qué ser cara ni complicada** —tiene que llegar a las manos correctas, en el momento correcto, con el mensaje correcto.
+Vivimos en **Melipilla, una comunidad de microagricultores**, lo que nos permite resolver problemas concretos de conectividad rural, no solo imaginarlos. Queremos convertir nuestro conocimiento técnico en una **herramienta real que ataque un problema país**: la desprotección del pequeño agricultor frente al cambio climático. Estamos convencidos de que la mejor tecnología **no tiene por qué ser cara ni complicada** —tiene que llegar a las manos correctas, en el momento correcto, con el mensaje correcto.
 
 ---
 
@@ -278,8 +297,8 @@ Convertir el conocimiento técnico en una **herramienta real que ataque un probl
 
 ```
 2026
-├── 🟢 08 ABR – 06 MAY ─ Postulación 
-├── 🟢 11 MAY – 20 MAY ─ Formación específica (Activación) ◄── ETAPA ACTUAL
+├── 🟢 08 ABR – 06 MAY ─ Postulación (Activación) ◄── ETAPA ACTUAL
+├── ⚪ 11 MAY – 20 MAY ─ Formación específica
 ├── ⚪ 02 JUN – 03 JUL ─ Aceleración
 ├── ⚪ 04 JUL – 19 JUL ─ Demo Day Final
 └── ⚪    20 AGO       ─ Premiación
@@ -304,15 +323,23 @@ Convertir el conocimiento técnico en una **herramienta real que ataque un probl
 - **DMC** — *Reporte Anual de la Evolución del Clima en Chile 2024*. [climatologia.meteochile.gob.cl](https://climatologia.meteochile.gob.cl/publicaciones/reporteEvolucionClima/reporteEvolucionClima2024.pdf)
 - **INIA La Platina** — Chacón, G. (2024) *Hortalizas versus heladas*. [inia.cl](https://www.inia.cl/2024/06/25/hortalizas-versus-heladas/)
 - **U. de Chile / ODEPA** (2023) — *Pérdidas y desperdicios de alimentos en Chile*.
-- **ODEPA** — *VIII Censo Agropecuario y Forestal*. [odepa.gob.cl](https://www.odepa.gob.cl)
-- **INDAP** — Programas PRA, PRI e IFP. [indap.gob.cl](https://www.indap.gob.cl)
+- **ODEPA / INE** — *VIII Censo Agropecuario y Forestal 2021 (CAF 2021)*. [odepa.gob.cl](https://www.odepa.gob.cl/contenidos-rubro/estadisticas/estadisticas-productivas/resultados-del-viii-censo-agropecuario-y-forestal) · [ine.gob.cl](https://www.ine.gob.cl/censoagropecuario)
+- **INDAP** — *Estrategia 2023–2030* y Programas PRA, PRI e IFP. [indap.gob.cl](https://www.indap.gob.cl)
 - **MMA** — *Estrategia Nacional de Residuos Orgánicos Chile 2040 (ENRO)*.
+
+### 👨‍🌾 Demografía y brecha digital agrícola
+
+- **ODEPA / INE** (2022) — *Análisis de Resultados del VIII Censo Agropecuario y Forestal*: distribución etaria de productores AFC (34,3% > 65 años; 74,2% > 50 años).
+- **INDAP** (2023) — *Estrategia Institucional 2023–2030*: envejecimiento estructural de la AFC como problemática prioritaria.
+- **Observatorio del Envejecimiento UC-Confuturo** (2022) — *Uso de TIC en adultos mayores en Chile*: 59% usa WhatsApp, 76% requiere asistencia para trámites digitales. [observatorioenvejecimiento.uc.cl](https://observatorioenvejecimiento.uc.cl/wp-content/uploads/2022/06/Observatorio-Reporte-TICS.pdf)
+- **CASEN 2022** — Acceso a internet en hogares rurales con adultos mayores (76% zona rural). [ministeriodesarrollosocial.gob.cl](https://www.ministeriodesarrollosocial.gob.cl)
+- **FAO / CEPAL / IICA** — *Perspectivas de la Agricultura y el Desarrollo Rural en las Américas 2023–2024*: informalidad laboral agrícola 86%, envejecimiento regional de la AFC. [repositorio.cepal.org](https://repositorio.cepal.org/server/api/core/bitstreams/ec3e9a9f-593e-4c55-85a3-b5eefbeca839/content)
 
 ### 📡 Habilitadores tecnológicos
 
 - **Entel / Wisely** — *NB-IoT en Chile: cómo la red de Entel habilita el IoT masivo*. [marketing.wisely.cl](https://marketing.wisely.cl/blog/nbiot-chile-red-entel-iot-masivo)
 - **SUBTEL** — Homologación de equipos terminales. [subtel.gob.cl](https://www.subtel.gob.cl)
-- **arXiv / IEEE Xplore** — Benchmarks de inferencia LLM en SBC (RK3588 NPU, Raspberry Pi 5, Llama 3.1/Qwen). [arxiv.org/html/2511.07425v1](https://arxiv.org/html/2511.07425v1)
+- **arXiv / IEEE Xplore** — Benchmarks de inferencia LLM en hardware de bajo costo (SBC con NPU, Llama 3.1 / Qwen 2.5). [arxiv.org/html/2511.07425v1](https://arxiv.org/html/2511.07425v1)
 - **Meta** — WhatsApp Business Platform API (plantillas categoría *Utility*).
 
 ### 🌎 Sostenibilidad y referencia internacional
