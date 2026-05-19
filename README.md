@@ -38,7 +38,7 @@
 
 El sistema despliega una red de **nodos físicos de bajo costo dentro de los invernaderos**, que combinan sensores microclimáticos, **conectividad inalámbrica adaptada a cada zona (NB-IoT, LoRaWAN o red celular)** y energía solar autónoma. Las peticiones críticas son procesadas por un **motor de IA open-source que opera en el servidor centralizado de CultivaSeguro**, y la respuesta llega al agricultor como alerta preventiva accionable en lenguaje natural —vía WhatsApp— justo antes de que ocurra una catástrofe.
 
-> 🎯 **Propósito**: Migrar el paradigma de la **indemnización post-desastre** (modelo actual del Estado vía seguro PACSA) hacia la **mitigación activa pre-evento**.
+> 🎯 **Propósito**: Migrar el paradigma de la **indemnización post-desastre** (modelo actual: el Estado subsidia seguros privados vía PACSA, que solo cubren el 66,6% del rendimiento e indemnizan semanas después del daño) hacia la **mitigación activa pre-evento**.
 
 ---
 
@@ -55,6 +55,7 @@ La matriz silvoagropecuaria chilena enfrenta un punto de inflexión estructural.
 | Inundaciones invierno 2023 (zona centro-sur) | **6.338 productores AFC dañados / US$ 900 millones** | INDAP / Colliers |
 | Reducción de productividad por eventos climáticos | **Hasta 9% / $3,9 millones CLP por hectárea/año** | *Pérdidas y Desperdicios de Alimentos en Chile* — U. de Chile / ODEPA (2023) |
 | Diferencia térmica nocturna interior/exterior del invernadero plástico | **Sólo +1 °C** | INIA La Platina (Chacón, 2024) |
+| **Cobertura real de seguros agropecuarios subsidiados (PACSA)** | **Solo 66,6% del rendimiento esperado; 17 días para denunciar siniestro, hasta 45 días para liquidación** | INDAP |
 | Aceleración del calentamiento (últimos 33 años) | **+0,21 °C/década** | Reporte Anual del Clima en Chile 2024 — DMC |
 
 > ⚠️ **Hallazgo crítico (INIA La Platina, 2024):** El invernadero plástico del pequeño agricultor **no lo protege de la helada radiativa nocturna**. Esto justifica empíricamente la necesidad de una **alerta temprana in-situ**, no macroclimática.
@@ -76,7 +77,7 @@ El diseño de cualquier solución AgTech para la AFC debe partir de un hecho dem
 
 ### 🧨 La falla lógica del modelo actual
 
-El Estado subsidia hasta el **95% de la prima del seguro agrícola (PACSA)**, pero ese mecanismo es **estructuralmente reactivo**: compensa el capital perdido, pero no previene la destrucción de la cosecha ni resguarda la cadena comercial del pequeño productor.
+El Estado subsidia hasta el **95% de la prima de seguros agrícolas privados (PACSA)**, pero ese mecanismo es **estructuralmente reactivo**: esas pólizas solo cubren el **66,6% del rendimiento esperado** (INDAP), indemnizan semanas después del siniestro y no previenen la destrucción del alimento ni resguardan la ruptura del ciclo comercial del pequeño productor.
 
 ```diff
 - Modelo actual: Pérdida → Catastro → Indemnización (semanas/meses)
